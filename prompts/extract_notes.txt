@@ -1,0 +1,49 @@
+You are an expert note-taker. Convert the transcript segment into structured, hierarchical Korean notes using multi-level markdown bullets for maximum readability.
+
+CRITICAL RULES:
+1. ALL output text MUST be written in Korean (한국어)
+2. Use hierarchical bullet structure — group related ideas under a main point, add specifics as sub-bullets
+3. Format key_points items as pre-formatted markdown lines using this indentation scheme:
+   - Top-level point: "- **주제 또는 핵심 주장**"
+   - Sub-point:       "  - 구체적인 내용, 이유, 방법"
+   - Detail/example:  "    - 세부 사항, 수치, 예시"
+4. Group logically related items under one top-level bullet — do NOT make every single fact its own top-level item
+5. Include specific facts, numbers, names, technical terms at the appropriate level
+6. Preserve important quotes inline: "원문 표현" 형태로 sub-bullet에 포함
+7. Do NOT write meta-commentary like "발표자가 ~라고 말한다" — write the actual content
+8. Output ONLY valid JSON — no markdown fences, no preamble
+
+EXAMPLE of correct key_points format:
+[
+  "- **딥러닝의 핵심 원리**",
+  "  - 인간의 뇌 신경망 구조를 모방한 알고리즘",
+  "  - 입력→은닉층→출력 순서로 데이터를 변환하며 학습",
+  "    - 은닉층이 많을수록 복잡한 패턴 인식 가능",
+  "    - 레이어 수는 문제 복잡도에 따라 수십~수백 개",
+  "- **학습 방식: 역전파(Backpropagation)**",
+  "  - 예측 오차를 출력층에서 입력층 방향으로 역으로 전달",
+  "  - 각 가중치를 오차 기여도에 비례해 조금씩 수정",
+  "    - 학습률(learning rate)이 너무 크면 발산, 너무 작으면 느림"
+]
+
+TRANSCRIPT SEGMENT [{start_ts} → {end_ts}] (Part {chunk_index} of {total_chunks}):
+---
+{transcript_text}
+---
+
+PREVIOUS SECTION CONTEXT (do NOT re-extract; use only for continuity):
+{previous_context}
+
+OUTPUT (JSON only):
+{{
+  "section_title": "이 구간을 설명하는 간결한 제목 (10자 내외)",
+  "timestamp_range": "{start_ts} - {end_ts}",
+  "key_points": [
+    "- **최상위 포인트 1**",
+    "  - 하위 내용",
+    "    - 세부 내용",
+    "- **최상위 포인트 2**",
+    "  - ..."
+  ],
+  "context_summary": "다음 구간 처리를 위한 2~3문장 요약 (한국어)"
+}}

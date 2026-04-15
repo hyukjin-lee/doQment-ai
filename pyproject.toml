@@ -1,0 +1,31 @@
+[project]
+name = "doqment"
+version = "0.1.0"
+requires-python = ">=3.11"
+description = "YouTube transcript to detailed notes using local Gemma4 LLM"
+
+dependencies = [
+    "youtube-transcript-api>=1.0",
+    "ollama>=0.5",
+    "typer>=0.12",
+    "rich>=13",
+    "python-slugify>=8",
+]
+
+[project.optional-dependencies]
+web = [
+    "fastapi>=0.111",
+    "uvicorn[standard]>=0.29",
+]
+
+[project.scripts]
+doqment = "doqment.cli:app"
+doqment-web = "doqment.web:serve"
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["doqment*"]
