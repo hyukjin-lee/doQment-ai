@@ -127,7 +127,7 @@ async def generate(req: GenerateRequest):
             await asyncio.sleep(0)
 
             # Step 2: 청킹
-            yield _sse("progress", {"step": 2, "message": "청크 분할 중..."})
+            yield _sse("progress", {"step": 2, "message": "시맨틱 경계 감지 및 청크 분할 중..."})
             await asyncio.sleep(0)
 
             chunks = chunk_transcript(segments, max_words=req.chunk_size)
