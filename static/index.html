@@ -213,6 +213,53 @@
     }
     .chunk-label { font-size: 11px; color: var(--text-dim); }
 
+    /* 청킹 방식 배지 */
+    .chunk-breakdown {
+      display: none;
+      gap: 5px;
+      padding-left: 30px;
+      flex-wrap: wrap;
+      margin-top: -4px;
+    }
+    .chunk-breakdown.visible { display: flex; }
+    .bd-badge {
+      font-size: 10px;
+      font-weight: 600;
+      padding: 2px 7px;
+      border-radius: 10px;
+      white-space: nowrap;
+    }
+    .bd-badge.semantic {
+      background: rgba(108,99,255,.15);
+      color: var(--accent);
+      border: 1px solid rgba(108,99,255,.3);
+    }
+    .bd-badge.forced {
+      background: rgba(251,191,36,.1);
+      color: var(--warning);
+      border: 1px solid rgba(251,191,36,.3);
+    }
+    .bd-badge.fallback {
+      background: rgba(248,113,113,.1);
+      color: var(--error);
+      border: 1px solid rgba(248,113,113,.3);
+    }
+    .bd-badge.dim {
+      background: var(--surface2);
+      color: var(--text-dim);
+      border: 1px solid var(--border);
+    }
+    /* 청크 처리 중 split_reason 태그 */
+    .reason-tag {
+      font-size: 10px;
+      padding: 1px 6px;
+      border-radius: 8px;
+      font-weight: 600;
+    }
+    .reason-tag.semantic { background: rgba(108,99,255,.15); color: var(--accent); }
+    .reason-tag.forced   { background: rgba(251,191,36,.1);  color: var(--warning); }
+    .reason-tag.end      { background: var(--surface2);       color: var(--text-dim); }
+
     /* ── 통계 배지 ── */
     .stats-grid {
       display: grid;
@@ -458,9 +505,15 @@
       <div class="step-item" id="step-2">
         <div class="step-icon">2</div>
         <div>
-          <div>청크 분할</div>
+          <div id="step-2-label">청크 분할</div>
           <div class="step-detail" id="step-2-detail"></div>
         </div>
+      </div>
+      <!-- 청킹 방식 breakdown 배지 -->
+      <div class="chunk-breakdown" id="chunk-breakdown">
+        <span class="bd-badge semantic" id="bd-semantic" style="display:none"></span>
+        <span class="bd-badge forced"   id="bd-forced"   style="display:none"></span>
+        <span class="bd-badge fallback" id="bd-fallback" style="display:none"></span>
       </div>
       <div class="step-item" id="step-3">
         <div class="step-icon">3</div>
@@ -597,9 +650,16 @@ function showError(msg) {
 
 function resetProgress() {
   for (let i = 1; i <= 5; i++) setStep(i, '', '');
+  document.getElementById('step-2-label').textContent = '청크 분할';
+  document.getElementById('chunk-breakdown').classList.remove('visible');
+  ['bd-semantic','bd-forced','bd-fallback'].forEach(id => {
+    const el = document.getElementById(id);
+    el.style.display = 'none';
+    el.textContent = '';
+  });
   document.getElementById('chunk-progress').classList.remove('visible');
   document.getElementById('chunk-bar').style.width = '0%';
-  document.getElementById('chunk-label').textContent = '';
+  document.getElementById('chunk-label').innerHTML = '';
   document.getElementById('stats-grid').classList.remove('visible');
   document.getElementById('download-btn').classList.remove('visible');
   document.getElementById('md-preview').innerHTML = '';
@@ -776,6 +836,35 @@ function handleEvent(event, data) {
     const state = data.done ? 'done' : 'active';
     setStep(n, state, data.detail || '');
 
+    // step 2 완료: 청킹 방식 배지 표시
+    if (n === 2 && data.done && data.chunk_stats) {
+      const s = data.chunk_stats;
+      const method = data.chunking_method; // "semantic" | "fallback"
+
+      // 레이블 업데이트
+      document.getElementById('step-2-label').textContent =
+        method === 'semantic' ? '시맨틱 청크 분할' : '청크 분할 (단어 수 폴백)';
+
+      const breakdown = document.getElementById('chunk-breakdown');
+      breakdown.classList.add('visible');
+
+      if (method === 'semantic') {
+        const bSem = document.getElementById('bd-semantic');
+        bSem.textContent = `시맨틱 경계 ${s.semantic}`;
+        bSem.style.display = 'inline';
+
+        if (s.max_words > 0) {
+          const bForced = document.getElementById('bd-forced');
+          bForced.textContent = `단어 수 초과 ${s.max_words}`;
+          bForced.style.display = 'inline';
+        }
+      } else {
+        const bFallback = document.getElementById('bd-fallback');
+        bFallback.textContent = `단어 수 분할 ${s.total}  (임베딩 모델 없음)`;
+        bFallback.style.display = 'inline';
+      }
+    }
+
     // 3단계 활성화 시 청크 진행 바 표시
     if (n === 3 && !data.done) {
       document.getElementById('chunk-progress').classList.add('visible');
@@ -788,8 +877,23 @@ function handleEvent(event, data) {
   if (event === 'chunk') {
     const pct = (data.index / data.total * 100).toFixed(0);
     document.getElementById('chunk-bar').style.width = pct + '%';
-    document.getElementById('chunk-label').textContent =
-      `${data.index} / ${data.total} 청크  [${data.start_ts} → ${data.end_ts}]`;
+
+    const reasonMap = {
+      semantic: ['시맨틱 경계', 'semantic'],
+      max_words: ['단어 수 초과', 'forced'],
+      end: ['마지막', 'end'],
+    };
+    const [reasonText, reasonClass] = reasonMap[data.split_reason] || ['', ''];
+    const reasonTag = reasonText
+      ? `<span class="reason-tag ${reasonClass}">${reasonText}</span>`
+      : '';
+
+    document.getElementById('chunk-label').innerHTML =
+      `청크 <strong>${data.index}</strong> / ${data.total}` +
+      `&nbsp;&nbsp;${data.start_ts} → ${data.end_ts}` +
+      (data.word_count ? `&nbsp;·&nbsp;${data.word_count}단어` : '') +
+      `&nbsp;&nbsp;${reasonTag}`;
+
     setStep(3, 'active', `${data.index}/${data.total} 청크 처리 중`);
   }
 

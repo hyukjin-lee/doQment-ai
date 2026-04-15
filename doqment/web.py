@@ -126,16 +126,35 @@ async def generate(req: GenerateRequest):
             })
             await asyncio.sleep(0)
 
-            # Step 2: 청킹
-            yield _sse("progress", {"step": 2, "message": "시맨틱 경계 감지 및 청크 분할 중..."})
+            # Step 2: 청킹 — 시맨틱 임베딩
+            n_segs = len(segments)
+            yield _sse("progress", {
+                "step": 2,
+                "message": "시맨틱 임베딩 중...",
+                "detail": f"{n_segs:,}개 세그먼트 → all-MiniLM-L6-v2",
+            })
             await asyncio.sleep(0)
 
-            chunks = chunk_transcript(segments, max_words=req.chunk_size)
+            chunks = await asyncio.to_thread(chunk_transcript, segments, req.chunk_size)
+
+            # 청킹 방식 분석
+            n_semantic = sum(1 for c in chunks if c.split_reason == "semantic")
+            n_forced   = sum(1 for c in chunks if c.split_reason == "max_words")
+            n_end      = sum(1 for c in chunks if c.split_reason == "end")
+            used_semantic = n_semantic > 0
+
             yield _sse("progress", {
                 "step": 2,
                 "message": "청크 분할 완료",
-                "detail": f"{len(chunks)}개 청크",
+                "detail": f"{len(chunks)}개 청크 · {'시맨틱 임베딩' if used_semantic else '단어 수 (폴백)'}",
                 "done": True,
+                "chunking_method": "semantic" if used_semantic else "fallback",
+                "chunk_stats": {
+                    "total": len(chunks),
+                    "semantic": n_semantic,
+                    "max_words": n_forced,
+                    "end": n_end,
+                },
             })
             await asyncio.sleep(0)
 
@@ -156,6 +175,8 @@ async def generate(req: GenerateRequest):
                     "total": len(chunks),
                     "start_ts": chunk.start_ts,
                     "end_ts": chunk.end_ts,
+                    "split_reason": chunk.split_reason,
+                    "word_count": len(chunk.text.split()),
                 })
                 await asyncio.sleep(0)
 
