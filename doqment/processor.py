@@ -105,14 +105,13 @@ class NoteProcessor:
         model: str = "gemma3:4b",
         host: str = "http://localhost:11434",
         temperature: float = 0.2,
-        num_predict: int = 3000,
         num_ctx: int = 8192,
     ) -> None:
         self.model = model
         self.client = Client(host=host)
         self._options = {
             "temperature": temperature,
-            "num_predict": num_predict,
+            "num_predict": -1,   # 제한 없음 — EOS 토큰까지 자연 생성 (JSON 잘림 방지)
             "num_ctx": num_ctx,
             "repeat_penalty": 1.3,
             "repeat_last_n": 128,
@@ -192,9 +191,8 @@ class NoteProcessor:
         for attempt in range(3):  # 0(기본), 1(1차 재시도), 2(2차 재시도)
             options = dict(self._options)
             if attempt > 0:
-                # 반복 루프 억제 강화 + 출력 길이 단축
+                # 반복 루프 억제 강화 (출력 길이는 제한하지 않음)
                 options["repeat_penalty"] = round(1.3 + attempt * 0.2, 1)  # 1.5 → 1.7
-                options["num_predict"]    = max(self._options["num_predict"] - attempt * 400, 600)
 
             try:
                 raw = self._call_model(prompt, options)
