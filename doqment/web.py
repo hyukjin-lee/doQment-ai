@@ -33,12 +33,15 @@ app.mount("/output", StaticFiles(directory=str(_OUTPUT_DIR)), name="output")
 
 # ── 요청/응답 모델 ─────────────────────────────────────────
 
+# 컨텍스트 윈도우(8192) 기준 안전 상한: 프롬프트+출력 공간 제외 후 ~4500단어
+_MAX_CHUNK_WORDS = 4500
+
+
 class GenerateRequest(BaseModel):
     url: str
     lang: str = "en"
     title: str = ""
     model: str = "gemma3:4b"
-    chunk_size: int = 1500
     ollama_host: str = "http://localhost:11434"
 
 
@@ -135,7 +138,7 @@ async def generate(req: GenerateRequest):
             })
             await asyncio.sleep(0)
 
-            chunks = await asyncio.to_thread(chunk_transcript, segments, req.chunk_size)
+            chunks = await asyncio.to_thread(chunk_transcript, segments, _MAX_CHUNK_WORDS)
 
             # 청킹 방식 분석
             n_semantic = sum(1 for c in chunks if c.split_reason == "semantic")

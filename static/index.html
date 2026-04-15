@@ -480,11 +480,6 @@
       <input id="title-input" type="text" placeholder="비워두면 자동 생성" />
     </div>
 
-    <div class="input-group">
-      <label>청크 크기 (단어/청크)</label>
-      <input id="chunk-size" type="number" value="1500" min="300" max="4000" step="100" />
-    </div>
-
     <div class="error-banner" id="error-banner"></div>
 
     <button class="btn-primary" id="generate-btn" onclick="startGenerate()">
@@ -787,7 +782,6 @@ async function startGenerate() {
     lang: document.getElementById('lang-select').value,
     title: document.getElementById('title-input').value.trim(),
     model: document.getElementById('model-select').value,
-    chunk_size: parseInt(document.getElementById('chunk-size').value) || 1500,
   };
 
   try {
