@@ -102,7 +102,7 @@ class NoteProcessor:
 
     def __init__(
         self,
-        model: str = "gemma3:4b",
+        model: str = "gemma4:e4b",
         host: str = "http://localhost:11434",
         temperature: float = 0.2,
         num_ctx: int = 8192,

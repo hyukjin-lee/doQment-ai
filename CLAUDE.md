@@ -57,9 +57,9 @@ pip install -e ".[web]"
 # 3. Ollama 서버 시작 (별도 터미널)
 ollama serve
 
-# 4. 모델 설치 (최초 1회, 3.3GB)
-ollama pull gemma3:4b
-# ollama pull gemma4:4b  ← Ollama 최신 버전으로 업그레이드 후 사용 가능
+# 4. 모델 설치 (최초 1회)
+ollama pull gemma4:e4b
+# ollama pull gemma4:4b  ← 더 높은 품질의 모델
 
 # 5. 실행
 python -m doqment.web          # 웹 UI → http://localhost:8000
@@ -208,8 +208,7 @@ python -m doqment "URL" --model <model-name>
 ## 알려진 제약사항
 
 - **Transcript 없는 영상 불가**: transcript가 비활성화된 영상은 처리 불가
-- **Ollama 0.20.0**: `gemma4:4b` 미지원 → `gemma3:4b` 사용. Ollama 업그레이드 후 gemma4 사용 가능
-- **처리 시간**: 1시간 영상 기준 gemma3:4b로 약 10~20분 소요 (GPU 성능에 따라 다름)
+- **처리 시간**: 1시간 영상 기준 gemma4:e4b로 약 10~20분 소요 (GPU 성능에 따라 다름)
 - **첫 실행 시 임베딩 모델 다운로드**: `all-MiniLM-L6-v2` (~90MB), `~/.cache/huggingface/`에 캐시
 - **언어**: transcript 언어와 LLM 출력 언어는 별개. 프롬프트에 한국어 강제 지시 포함
 

@@ -1,8 +1,41 @@
+# Python
 .venv/
 __pycache__/
 *.pyc
 *.pyo
+*.pyd
 *.egg-info/
+*.egg
+dist/
+build/
+.eggs/
+
+# Environment / Secrets
 .env
+.env.*
+!.env.example
+
+# Application output
 output/
+
+# Claude Code - local settings (개인 환경에 종속된 권한 설정)
+.claude/settings.local.json
+
+# macOS
 .DS_Store
+.AppleDouble
+.LSOverride
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Pytest / coverage
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Logs
+*.log

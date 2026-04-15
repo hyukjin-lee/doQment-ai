@@ -41,7 +41,7 @@ class GenerateRequest(BaseModel):
     url: str
     lang: str = "en"
     title: str = ""
-    model: str = "gemma3:4b"
+    model: str = "gemma4:e4b"
     ollama_host: str = "http://localhost:11434"
 
 

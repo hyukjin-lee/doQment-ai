@@ -40,7 +40,7 @@ def main(
         "--output", "-o",
         help="Markdown 파일 저장 경로",
     ),
-    model: str = typer.Option("gemma3:4b", "--model", "-m", help="Ollama 모델명 (예: gemma3:4b, gemma4:4b)"),
+    model: str = typer.Option("gemma4:e4b", "--model", "-m", help="Ollama 모델명 (예: gemma4:e4b, gemma4:4b)"),
     chunk_size: int = typer.Option(1500, "--chunk-size", help="청크당 최대 단어 수"),
     ollama_host: str = typer.Option(
         "http://localhost:11434",
