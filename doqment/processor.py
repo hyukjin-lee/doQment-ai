@@ -22,10 +22,8 @@ def _load_prompt() -> str:
 _EMPTY_NOTES: dict = {
     "section_title": "Untitled Section",
     "timestamp_range": "",
+    "summary": "",
     "key_points": [],
-    "notable_quotes": [],
-    "definitions": [],
-    "examples_mentioned": [],
     "context_summary": "",
 }
 
@@ -40,6 +38,7 @@ def _rescue_partial_json(raw: str) -> dict | None:
         return None
 
     ts_m  = re.search(r'"timestamp_range"\s*:\s*"([^"]+)"', raw)
+    sum_m = re.search(r'"summary"\s*:\s*"([^"]{10,})"', raw)
     ctx_m = re.search(r'"context_summary"\s*:\s*"([^"]{10,})"', raw)
 
     # key_points: 완전한 문자열 항목만 (내용이 충분한 것)
@@ -50,6 +49,7 @@ def _rescue_partial_json(raw: str) -> dict | None:
         **_EMPTY_NOTES,
         "section_title": title_m.group(1),
         "timestamp_range": ts_m.group(1) if ts_m else "",
+        "summary": sum_m.group(1) if sum_m else "",
         "key_points": points,
         "context_summary": ctx_m.group(1) if ctx_m else "",
     }

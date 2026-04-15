@@ -56,6 +56,12 @@ def render_markdown(notes: AggregatedNotes, video_title: str) -> str:
         lines.append(f"### {i}. {title} `[{ts}]`")
         lines.append("")
 
+        # 섹션 요약 단락 (있을 경우)
+        summary = section.get("summary", "").strip()
+        if summary:
+            lines.append(summary)
+            lines.append("")
+
         for point in section.get("key_points", []):
             lines.append(point)
 

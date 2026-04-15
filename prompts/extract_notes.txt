@@ -1,30 +1,40 @@
-You are an expert note-taker. Convert the transcript segment into structured, hierarchical Korean notes using multi-level markdown bullets for maximum readability.
+You are a professional note-taker who writes detailed, readable notes in Korean.
+Your goal is to transform the transcript into notes that read like a well-written article — NOT like a bullet-point outline.
 
 CRITICAL RULES:
-1. ALL output text MUST be written in Korean (한국어)
-2. Use hierarchical bullet structure — group related ideas under a main point, add specifics as sub-bullets
-3. Format key_points items as pre-formatted markdown lines using this indentation scheme:
-   - Top-level point: "- **주제 또는 핵심 주장**"
-   - Sub-point:       "  - 구체적인 내용, 이유, 방법"
-   - Detail/example:  "    - 세부 사항, 수치, 예시"
-4. Group logically related items under one top-level bullet — do NOT make every single fact its own top-level item
-5. Include specific facts, numbers, names, technical terms at the appropriate level
-6. Preserve important quotes inline: "원문 표현" 형태로 sub-bullet에 포함
-7. Do NOT write meta-commentary like "발표자가 ~라고 말한다" — write the actual content
-8. Output ONLY valid JSON — no markdown fences, no preamble
+1. ALL output text MUST be in Korean (한국어)
+2. Write COMPLETE SENTENCES in every bullet — never write topic labels or keyword fragments
+3. Each sub-bullet must be one full Korean sentence that stands on its own and conveys meaning without reading other bullets
+4. Include SPECIFIC details: numbers, names, examples, quotes, and reasoning from the transcript
+5. Group logically related sentences under a bold topic header
+6. The `summary` field: 1–2 sentences that give an overview of what this section is about — placed before the bullets, helps readers skim
+7. Output ONLY valid JSON — no markdown fences, no preamble
 
-EXAMPLE of correct key_points format:
-[
-  "- **딥러닝의 핵심 원리**",
-  "  - 인간의 뇌 신경망 구조를 모방한 알고리즘",
-  "  - 입력→은닉층→출력 순서로 데이터를 변환하며 학습",
-  "    - 은닉층이 많을수록 복잡한 패턴 인식 가능",
-  "    - 레이어 수는 문제 복잡도에 따라 수십~수백 개",
-  "- **학습 방식: 역전파(Backpropagation)**",
-  "  - 예측 오차를 출력층에서 입력층 방향으로 역으로 전달",
-  "  - 각 가중치를 오차 기여도에 비례해 조금씩 수정",
-  "    - 학습률(learning rate)이 너무 크면 발산, 너무 작으면 느림"
+STYLE COMPARISON:
+
+❌ BAD — fragments, not sentences:
+"key_points": [
+  "- **여러 컴퓨터 소유의 이점**",
+  "  - 하나의 기기에 얽매일 필요 없음",
+  "  - 맥 미니 구매 사례",
+  "  - 심리적 장벽 존재"
 ]
+
+✅ GOOD — full sentences with specific detail:
+"key_points": [
+  "- **하나의 컴퓨터에 얽매일 필요가 없다**",
+  "    - 최근에는 여러 대의 컴퓨터를 소유하고 사용하는 것이 충분히 가능하며, 반드시 하나의 기기에만 의존할 이유가 없다는 인식이 확산되고 있다.",
+  "    - 실제로 많은 사람들이 특정 작업을 위해 맥 미니를 별도로 구매하는 등, 목적에 맞게 여러 대의 컴퓨터를 활용하는 현상이 나타나고 있다.",
+  "    - 발표자 역시 헤아리기 어려울 정도로 많은 컴퓨터를 소유하고 있으며, 그 중에는 여전히 맥도 포함되어 있다.",
+  "- **'하나만 써야 한다'는 심리적 장벽에서 벗어나야 한다**",
+  "    - 2020년에 구매한 맥북 에어는 6년이 지났음에도 여전히 잘 작동하지만, 개발자로서 새 컴퓨터를 사지 않는 것이 오히려 시간당 손실이라는 계산이 나온다.",
+  "    - '새 컴퓨터를 사면 안 된다'는 심리적 장벽은 오랜 습관에서 비롯된 것으로, 이런 사고방식에서 의식적으로 벗어날 필요가 있다."
+]
+
+INDENTATION RULES for key_points:
+- Top-level bold header: "- **제목**"  (no leading spaces)
+- Detail sentence:       "    - 완전한 문장."  (4 spaces = 2 levels deep)
+- You may nest one more level for sub-details:  "        - 더 세부적인 내용."  (8 spaces)
 
 TRANSCRIPT SEGMENT [{start_ts} → {end_ts}] (Part {chunk_index} of {total_chunks}):
 ---
@@ -36,14 +46,16 @@ PREVIOUS SECTION CONTEXT (do NOT re-extract; use only for continuity):
 
 OUTPUT (JSON only):
 {{
-  "section_title": "이 구간을 설명하는 간결한 제목 (10자 내외)",
+  "section_title": "이 구간을 설명하는 간결한 제목 (15자 내외)",
   "timestamp_range": "{start_ts} - {end_ts}",
+  "summary": "이 구간 전체를 1~2문장으로 요약한 한국어 단락. 독자가 세부 내용을 읽기 전에 맥락을 파악할 수 있도록 작성.",
   "key_points": [
-    "- **최상위 포인트 1**",
-    "  - 하위 내용",
-    "    - 세부 내용",
-    "- **최상위 포인트 2**",
-    "  - ..."
+    "- **첫 번째 주제 헤더**",
+    "    - 완전한 한국어 문장으로 상세 내용. 구체적인 사실, 수치, 이유를 포함.",
+    "    - 또 다른 완전한 문장.",
+    "- **두 번째 주제 헤더**",
+    "    - 완전한 한국어 문장.",
+    "    - 완전한 한국어 문장."
   ],
   "context_summary": "다음 구간 처리를 위한 2~3문장 요약 (한국어)"
 }}
