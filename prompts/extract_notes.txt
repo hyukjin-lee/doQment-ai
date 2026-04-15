@@ -1,60 +1,90 @@
-You are a professional note-taker who writes detailed, readable notes in Korean.
-Your goal is to transform the transcript into notes that read like a well-written article — NOT like a bullet-point outline.
+You are a professional note-taker who produces detailed, structured Korean notes.
+Your output must match a specific document format — follow it exactly.
 
-CRITICAL RULES:
-1. ALL output text MUST be in Korean (한국어)
-2. Write COMPLETE SENTENCES in every bullet — never write topic labels or keyword fragments
-3. Each sub-bullet must be one full Korean sentence that stands on its own and conveys meaning without reading other bullets
-4. Include SPECIFIC details: numbers, names, examples, quotes, and reasoning from the transcript
-5. Group logically related sentences under a bold topic header
-6. The `summary` field: 1–2 sentences that give an overview of what this section is about — placed before the bullets, helps readers skim
-7. Output ONLY valid JSON — no markdown fences, no preamble
+═══════════════════════════════════════
+DOCUMENT STRUCTURE
+═══════════════════════════════════════
 
-STYLE COMPARISON:
+"summary" field:
+  → 1-2 compelling Korean sentences that capture the essence of this segment.
+     Written as a natural paragraph, not a bullet. Makes the reader want to continue.
 
-❌ BAD — fragments, not sentences:
+"key_points" field:
+  → An array of strings that forms a structured sub-document:
+     1. Identify 2-4 distinct sub-topics in the transcript
+     2. Start each sub-topic with a descriptive #### heading
+     3. Under each heading: write 1-3 bold bullet groups
+     4. Under each bold group: write complete Korean sentences as sub-bullets
+     5. Separate bold groups with <br>
+     6. Separate sub-sections with an empty string ""
+
+═══════════════════════════════════════
+CRITICAL WRITING RULES
+═══════════════════════════════════════
+
+1. ALL text MUST be in Korean (한국어)
+2. Sub-bullets = COMPLETE SENTENCES — never write topic labels or fragments
+   ❌ BAD:  "    - 맥 미니 구매 사례"
+   ✅ GOOD: "    - 실제로 많은 사람들이 특정 목적을 위해 맥 미니를 별도로 구매하는 사례가 늘고 있다."
+3. Include SPECIFIC details from the transcript: numbers, names, quotes, examples, reasoning
+4. Each bold group header summarizes what the bullets below are about
+5. Do NOT add commentary like "발표자가 ~라고 말한다" — write the content directly
+
+═══════════════════════════════════════
+EXAMPLE OUTPUT
+═══════════════════════════════════════
+
+"summary": "애플 생태계에 오랫동안 갇혀 있던 발표자가 다양한 플랫폼을 경험하며 깨달은 인사이트를 공유하면서, 단 하나의 기기에 얽매이지 않는 유연한 사고방식의 중요성을 강조한다.",
+
 "key_points": [
-  "- **여러 컴퓨터 소유의 이점**",
-  "  - 하나의 기기에 얽매일 필요 없음",
-  "  - 맥 미니 구매 사례",
-  "  - 심리적 장벽 존재"
-]
-
-✅ GOOD — full sentences with specific detail:
-"key_points": [
+  "#### 여러 대의 컴퓨터를 소유하고 활용하는 이점",
+  "",
   "- **하나의 컴퓨터에 얽매일 필요가 없다**",
-  "    - 최근에는 여러 대의 컴퓨터를 소유하고 사용하는 것이 충분히 가능하며, 반드시 하나의 기기에만 의존할 이유가 없다는 인식이 확산되고 있다.",
-  "    - 실제로 많은 사람들이 특정 작업을 위해 맥 미니를 별도로 구매하는 등, 목적에 맞게 여러 대의 컴퓨터를 활용하는 현상이 나타나고 있다.",
+  "    - 최근에는 여러 대의 컴퓨터를 소유하고 사용하는 것이 충분히 가능하다는 인식이 확산되고 있으며, 반드시 하나의 기기에만 의존할 이유가 없다.",
+  "    - 실제로 많은 사람들이 특정 목적을 위해 맥 미니를 별도로 구매하는 등, 여러 기기를 용도에 맞게 활용하는 현상이 나타나고 있다.",
   "    - 발표자 역시 헤아리기 어려울 정도로 많은 컴퓨터를 소유하고 있으며, 그 중에는 여전히 맥도 포함되어 있다.",
-  "- **'하나만 써야 한다'는 심리적 장벽에서 벗어나야 한다**",
-  "    - 2020년에 구매한 맥북 에어는 6년이 지났음에도 여전히 잘 작동하지만, 개발자로서 새 컴퓨터를 사지 않는 것이 오히려 시간당 손실이라는 계산이 나온다.",
-  "    - '새 컴퓨터를 사면 안 된다'는 심리적 장벽은 오랜 습관에서 비롯된 것으로, 이런 사고방식에서 의식적으로 벗어날 필요가 있다."
+  "<br>",
+  "- **'하나의 컴퓨터만 써야 한다'는 심리적 장벽**",
+  "    - 과거에는 2~3년마다 새 노트북을 구매했지만, 2020년에 산 맥북 에어가 6년이 지난 지금도 잘 작동하는 등 이제 상황이 달라졌다.",
+  "    - 개발자로서 시간당 가치를 계산해보면 새 컴퓨터를 사지 않는 것이 오히려 손해임에도 불구하고, '사면 안 된다'는 심리적 장벽이 여전히 작용한다.",
+  "    - 윈도우나 리눅스를 써보고 싶다는 생각은 있지만, 노트북이 사용되지 않는 채로 방치되는 것에 익숙하지 않다는 오랜 습관이 장벽으로 작용한다.",
+  "<br>",
+  "#### '가난한 마음가짐'에서 벗어나야 하는 이유",
+  "",
+  "- **하나의 CPU에만 얽매이는 것은 잘못된 생각이다**",
+  "    - '나는 오직 하나의 CPU만 쓸 수 있다'는 생각은 일종의 '가난한 마음가짐(poverty mindset)'으로, 이는 명백히 잘못된 인식이다.",
+  "    - 웹 개발자는 이미 ChatGPT 사용, 웹 앱 실행 등을 통해 수많은 컴퓨터 자원을 활용하고 있으며, 이는 마법이 아니라 컴퓨터의 작동 방식이다.",
+  "    - 따라서 집에서 여러 대의 컴퓨터를 사용하는 것은 전혀 이상한 일이 아니며, 컴퓨터를 좋아한다면 시계 수집처럼 다양한 기기를 즐기는 것이 자연스럽다."
 ]
 
-INDENTATION RULES for key_points:
-- Top-level bold header: "- **제목**"  (no leading spaces)
-- Detail sentence:       "    - 완전한 문장."  (4 spaces = 2 levels deep)
-- You may nest one more level for sub-details:  "        - 더 세부적인 내용."  (8 spaces)
-
-TRANSCRIPT SEGMENT [{start_ts} → {end_ts}] (Part {chunk_index} of {total_chunks}):
----
+═══════════════════════════════════════
+TRANSCRIPT SEGMENT [{start_ts} → {end_ts}] (Part {chunk_index} of {total_chunks})
+═══════════════════════════════════════
 {transcript_text}
----
 
 PREVIOUS SECTION CONTEXT (do NOT re-extract; use only for continuity):
 {previous_context}
 
-OUTPUT (JSON only):
+═══════════════════════════════════════
+OUTPUT (JSON only — no markdown fences)
+═══════════════════════════════════════
 {{
-  "section_title": "이 구간을 설명하는 간결한 제목 (15자 내외)",
+  "section_title": "이 구간 전체를 아우르는 간결한 제목 (15자 내외)",
   "timestamp_range": "{start_ts} - {end_ts}",
-  "summary": "이 구간 전체를 1~2문장으로 요약한 한국어 단락. 독자가 세부 내용을 읽기 전에 맥락을 파악할 수 있도록 작성.",
+  "summary": "이 구간의 핵심을 담은 1~2문장 한국어 단락.",
   "key_points": [
-    "- **첫 번째 주제 헤더**",
-    "    - 완전한 한국어 문장으로 상세 내용. 구체적인 사실, 수치, 이유를 포함.",
-    "    - 또 다른 완전한 문장.",
-    "- **두 번째 주제 헤더**",
+    "#### 첫 번째 소주제 제목",
+    "",
+    "- **볼드 그룹 헤더**",
     "    - 완전한 한국어 문장.",
+    "    - 완전한 한국어 문장.",
+    "<br>",
+    "- **두 번째 볼드 그룹 헤더**",
+    "    - 완전한 한국어 문장.",
+    "",
+    "#### 두 번째 소주제 제목",
+    "",
+    "- **볼드 그룹 헤더**",
     "    - 완전한 한국어 문장."
   ],
   "context_summary": "다음 구간 처리를 위한 2~3문장 요약 (한국어)"

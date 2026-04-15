@@ -345,6 +345,7 @@
     #md-preview h1 { font-size: 26px; margin-bottom: 16px; color: var(--text); }
     #md-preview h2 { font-size: 18px; margin: 28px 0 12px; color: var(--text); border-bottom: 1px solid var(--border); padding-bottom: 6px; }
     #md-preview h3 { font-size: 15px; margin: 20px 0 8px; color: var(--accent); }
+    #md-preview h4 { font-size: 13px; margin: 20px 0 6px; color: var(--text); font-weight: 700; letter-spacing: 0.1px; border-left: 3px solid var(--accent); padding-left: 10px; }
     #md-preview p { margin-bottom: 12px; }
     #md-preview ul { padding-left: 20px; margin-bottom: 12px; }
     #md-preview li { margin-bottom: 5px; }
@@ -710,7 +711,9 @@ function md2html(md) {
     }
     if (inTable) flushTable();
 
-    // 헤더
+    // 헤더 (#### 먼저 체크해야 ### 에 걸리지 않음)
+    const h4 = raw.match(/^#### (.+)/);
+    if (h4) { closeLists(0); html += `<h4>${inlineFormat(h4[1])}</h4>`; continue; }
     const h3 = raw.match(/^### (.+)/);
     if (h3) { closeLists(0); html += `<h3>${inlineFormat(h3[1])}</h3>`; continue; }
     const h2 = raw.match(/^## (.+)/);
