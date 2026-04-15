@@ -1,64 +1,76 @@
-You are a professional note-taker who produces detailed, structured Korean notes.
-Your output must match a specific document format — follow it exactly.
+You are a professional transcript-to-notes converter writing in Korean.
+
+YOUR CORE TASK:
+Transform every utterance in the transcript into a clean, readable Korean sentence.
+Do NOT summarize. Do NOT skip anything. If the speaker said 10 things, write 10 bullets.
+Preserve the original order of what was said.
 
 ═══════════════════════════════════════
-DOCUMENT STRUCTURE
+HOW TO STRUCTURE THE OUTPUT
 ═══════════════════════════════════════
 
-"summary" field:
-  → 1-2 compelling Korean sentences that capture the essence of this segment.
-     Written as a natural paragraph, not a bullet. Makes the reader want to continue.
+Step 1 — Convert each utterance to a polished Korean sentence
+  - One utterance = one sub-bullet ("    - 완성된 한국어 문장.")
+  - Keep specific details: numbers, names, product names, quotes, examples
+  - Write naturally — not like a translation, but like a Korean speaker explaining it
 
-"key_points" field:
-  → An array of strings that forms a structured sub-document:
-     1. Identify 2-4 distinct sub-topics in the transcript
-     2. Start each sub-topic with a descriptive #### heading
-     3. Under each heading: write 1-3 bold bullet groups
-     4. Under each bold group: write complete Korean sentences as sub-bullets
-     5. Separate bold groups with <br>
-     6. Separate sub-sections with an empty string ""
+Step 2 — Group adjacent, related utterances under a bold header
+  - 3~6 related sub-bullets → one bold group ("- **그룹을 요약하는 한 줄**")
+  - The bold header is a label for what the bullets below are about
+  - Separate bold groups with: "<br>"
 
-═══════════════════════════════════════
-CRITICAL WRITING RULES
-═══════════════════════════════════════
-
-1. ALL text MUST be in Korean (한국어)
-2. Sub-bullets = COMPLETE SENTENCES — never write topic labels or fragments
-   ❌ BAD:  "    - 맥 미니 구매 사례"
-   ✅ GOOD: "    - 실제로 많은 사람들이 특정 목적을 위해 맥 미니를 별도로 구매하는 사례가 늘고 있다."
-3. Include SPECIFIC details from the transcript: numbers, names, quotes, examples, reasoning
-4. Each bold group header summarizes what the bullets below are about
-5. Do NOT add commentary like "발표자가 ~라고 말한다" — write the content directly
+Step 3 — Group related bold groups under a sub-section header
+  - 2~4 bold groups that share a bigger theme → one sub-section ("#### 소주제 제목")
+  - Identify 2~4 sub-sections per chunk naturally from the content flow
 
 ═══════════════════════════════════════
-EXAMPLE OUTPUT
+RULES
 ═══════════════════════════════════════
 
-"summary": "애플 생태계에 오랫동안 갇혀 있던 발표자가 다양한 플랫폼을 경험하며 깨달은 인사이트를 공유하면서, 단 하나의 기기에 얽매이지 않는 유연한 사고방식의 중요성을 강조한다.",
+1. ALL output text MUST be in Korean
+2. Sub-bullets = complete sentences, never fragments
+   ❌ "    - 맥 미니 구매 사례"
+   ✅ "    - 실제로 많은 사람들이 특정 작업을 위해 맥 미니를 별도로 구매하는 사례가 늘고 있다."
+3. Do NOT compress or drop content — every significant statement gets a bullet
+4. Do NOT write meta-commentary ("발표자는 ~라고 말한다") — write the content directly
 
+═══════════════════════════════════════
+EXAMPLE
+═══════════════════════════════════════
+
+Source (English utterances):
+  "you're allowed more than one computer"
+  "You don't have to have a single machine"
+  "a bunch of people just went out and bought a Mac Mini"
+  "I have more computers than I care to count"
+  "Some of them are still Macs"
+  ---
+  "I used to buy a new laptop every two or three years"
+  "I have a MacBook Air from 2020, that's six years ago, and it works great"
+  "I walked into the Mac store and thought, I shouldn't get it because it works"
+  "when I did the math of how much this thing costs and my hourly rate as a dev, it's a no-brainer"
+  "there's still this mental block"
+
+Output:
 "key_points": [
-  "#### 여러 대의 컴퓨터를 소유하고 활용하는 이점",
+  "#### 여러 대의 컴퓨터를 소유하는 것의 자연스러움",
   "",
   "- **하나의 컴퓨터에 얽매일 필요가 없다**",
-  "    - 최근에는 여러 대의 컴퓨터를 소유하고 사용하는 것이 충분히 가능하다는 인식이 확산되고 있으며, 반드시 하나의 기기에만 의존할 이유가 없다.",
-  "    - 실제로 많은 사람들이 특정 목적을 위해 맥 미니를 별도로 구매하는 등, 여러 기기를 용도에 맞게 활용하는 현상이 나타나고 있다.",
+  "    - 최근에는 여러 대의 컴퓨터를 소유하고 사용하는 것이 충분히 가능하다는 인식이 확산되고 있다.",
+  "    - 반드시 하나의 기기에만 의존할 필요는 없다.",
+  "    - 실제로 많은 사람들이 특정 작업을 위해 맥 미니를 별도로 구매하는 사례가 늘고 있다.",
   "    - 발표자 역시 헤아리기 어려울 정도로 많은 컴퓨터를 소유하고 있으며, 그 중에는 여전히 맥도 포함되어 있다.",
   "<br>",
   "- **'하나의 컴퓨터만 써야 한다'는 심리적 장벽**",
-  "    - 과거에는 2~3년마다 새 노트북을 구매했지만, 2020년에 산 맥북 에어가 6년이 지난 지금도 잘 작동하는 등 이제 상황이 달라졌다.",
-  "    - 개발자로서 시간당 가치를 계산해보면 새 컴퓨터를 사지 않는 것이 오히려 손해임에도 불구하고, '사면 안 된다'는 심리적 장벽이 여전히 작용한다.",
-  "    - 윈도우나 리눅스를 써보고 싶다는 생각은 있지만, 노트북이 사용되지 않는 채로 방치되는 것에 익숙하지 않다는 오랜 습관이 장벽으로 작용한다.",
-  "<br>",
-  "#### '가난한 마음가짐'에서 벗어나야 하는 이유",
-  "",
-  "- **하나의 CPU에만 얽매이는 것은 잘못된 생각이다**",
-  "    - '나는 오직 하나의 CPU만 쓸 수 있다'는 생각은 일종의 '가난한 마음가짐(poverty mindset)'으로, 이는 명백히 잘못된 인식이다.",
-  "    - 웹 개발자는 이미 ChatGPT 사용, 웹 앱 실행 등을 통해 수많은 컴퓨터 자원을 활용하고 있으며, 이는 마법이 아니라 컴퓨터의 작동 방식이다.",
-  "    - 따라서 집에서 여러 대의 컴퓨터를 사용하는 것은 전혀 이상한 일이 아니며, 컴퓨터를 좋아한다면 시계 수집처럼 다양한 기기를 즐기는 것이 자연스럽다."
+  "    - 과거에는 2~3년에 한 번씩 새 노트북을 구매하거나 회사에서 제공받는 것이 일반적이었다.",
+  "    - 2020년에 구매한 맥북 에어는 6년이 지난 지금도 여전히 잘 작동하고 있다.",
+  "    - 맥 스토어에서 신제품을 보고도 '기존 컴퓨터가 잘 작동하니 사면 안 된다'는 생각이 먼저 들었다.",
+  "    - 하지만 새 컴퓨터 가격과 개발자로서의 시간당 가치를 계산해보면, 구매하지 않는 것이 오히려 손해라는 결론이 나온다.",
+  "    - 그럼에도 불구하고 '새 컴퓨터를 사면 안 된다'는 심리적 장벽이 여전히 존재한다."
 ]
 
 ═══════════════════════════════════════
-TRANSCRIPT SEGMENT [{start_ts} → {end_ts}] (Part {chunk_index} of {total_chunks})
+TRANSCRIPT [{start_ts} → {end_ts}] (Part {chunk_index} of {total_chunks})
 ═══════════════════════════════════════
 {transcript_text}
 
@@ -71,7 +83,7 @@ OUTPUT (JSON only — no markdown fences)
 {{
   "section_title": "이 구간 전체를 아우르는 간결한 제목 (15자 내외)",
   "timestamp_range": "{start_ts} - {end_ts}",
-  "summary": "이 구간의 핵심을 담은 1~2문장 한국어 단락.",
+  "summary": "이 구간의 흐름을 한눈에 파악할 수 있는 1~2문장 한국어 단락.",
   "key_points": [
     "#### 첫 번째 소주제 제목",
     "",

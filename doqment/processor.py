@@ -105,7 +105,7 @@ class NoteProcessor:
         model: str = "gemma3:4b",
         host: str = "http://localhost:11434",
         temperature: float = 0.2,
-        num_predict: int = 1500,
+        num_predict: int = 3000,
         num_ctx: int = 8192,
     ) -> None:
         self.model = model
