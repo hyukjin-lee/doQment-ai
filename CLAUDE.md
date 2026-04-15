@@ -1,7 +1,7 @@
 # doQment — Claude Code 개발 가이드
 
 YouTube transcript를 로컬 LLM(Gemma3/4)으로 분석해 상세 Markdown 노트를 생성하는 서비스.  
-lilysAI처럼 압축 없이 라인별 상세 노트를 만드는 것이 핵심 목표.
+압축 없이 각 발화를 라인별로 충실하게 변환하는 상세 노트 생성이 핵심 목표.
 
 ---
 
